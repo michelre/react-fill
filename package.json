@@ -1,16 +1,18 @@
 {
-  "name": "react-dictation-boilerplate",
+  "name": "react-fill",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server",
+    "build": "webpack -p"
   },
   "keywords": [],
   "author": "Remi Michel <remi.michel38@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "babel-preset-react": "^6.24.1",
+    "extract-text-webpack-plugin": "^3.0.0",
     "ramda": "^0.24.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",

@@ -1,7 +1,14 @@
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+const extractSass = new ExtractTextPlugin({
+    filename: '[name].[contentHash].css',
+    disable: process.env.NODE_ENV === 'development'
+});
+
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'bundle.js',
+    filename: 'build.[hash].js',
     path: `${__dirname}/dist`,
     publicPath: '/dist/',
   },
@@ -15,14 +22,14 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        use: [
-          { loader: "style-loader" },
-          { loader: "css-loader" },
-          { loader: "sass-loader" },
-        ]
+        use: extractSass.extract({
+          use: [{ loader: "css-loader" }, { loader: "sass-loader" }],
+          fallback: "style-loader"
+        }),
       },
     ]
   },
+  plugins: [ extractSass ],
   devServer: {
     port: 9091
   }
