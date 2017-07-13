@@ -1,4 +1,5 @@
-import React from 'react';
+import ReactFill from './ReactFill';
+/*import React from 'react';
 import ReactDOM from 'react-dom';
 
 import ReactFill from './ReactFill';
@@ -9,4 +10,4 @@ ReactDOM.render(<ReactFill
   nbBlanks={8}
   text={text}
   completeAction={(data) => console.log(data)}
-/>, document.querySelector('#app'));
+/>, document.querySelector('#app'));*/
