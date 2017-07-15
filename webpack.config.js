@@ -1,14 +1,14 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const extractSass = new ExtractTextPlugin({
-    filename: '[name].[contentHash].css',
+    filename: 'react-fill.css',
     disable: process.env.NODE_ENV === 'development'
 });
 
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'build.[hash].js',
+    filename: 'react-fill.js',
     path: `${__dirname}/dist`,
     publicPath: '/dist/',
   },
