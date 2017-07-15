@@ -11,7 +11,15 @@ module.exports = {
     filename: 'react-fill.js',
     path: `${__dirname}/dist`,
     publicPath: '/dist/',
+    library: 'ReactFill',
+    libraryTarget: 'umd'
   },
+  externals: [
+    'react',
+    'react-dom',
+    'voca',
+    'ramda'
+  ],
   devtool: 'eval',
   module: {
     rules: [
