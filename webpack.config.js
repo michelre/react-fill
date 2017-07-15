@@ -17,7 +17,7 @@ module.exports = {
   externals: [
     'react',
     'react-dom',
-    'voca',
+    /^voca\/.+$/,
     'ramda'
   ],
   devtool: 'eval',

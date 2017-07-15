@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "./dist/react-fill.js",
+  "module": "src/index.js",
   "scripts": {
     "dev": "webpack-dev-server",
     "clean": "rm -rf dist/*",
