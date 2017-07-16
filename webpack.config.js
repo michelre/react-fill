@@ -6,7 +6,7 @@ const extractSass = new ExtractTextPlugin({
 });
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/ReactFill.js',
   output: {
     filename: 'react-fill.js',
     path: `${__dirname}/dist`,
