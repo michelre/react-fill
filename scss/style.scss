@@ -3,7 +3,12 @@ input {
   left: -9999px;
 }
 
-div.missing-word {
+label {
+  display: inline-block !important;
+  font-size: inherit !important;
+}
+
+span.missing-word {
   display: inline-block;
 
   .dot {

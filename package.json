@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "webpack-dev-server",
     "clean": "rm -rf dist/*",
-    "build": "npm run clean && webpack -p"
+    "build": "npm run clean && webpack -p",
+    "build:dev": "webpack -w"
   },
   "keywords": [],
   "author": "Remi Michel <remi.michel38@gmail.com>",
