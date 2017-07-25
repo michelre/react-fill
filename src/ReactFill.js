@@ -31,7 +31,7 @@ class ReactFill extends React.Component {
 
   updateStateNewText(props){
     const tokens = words(props.text, /[^\s]+/g);
-    const nbBlanks = Math.floor(props.percentBlank * tokens.length);
+    const nbBlanks = Math.ceil(props.percentBlank * tokens.length);
     const missingIndexes = getRandoms(nbBlanks, tokens.length);
     const data = R.map((idx) => [`${idx}-${tokens[idx]}`, { original: tokens[idx], value: '' }], missingIndexes)
 
@@ -69,8 +69,10 @@ class ReactFill extends React.Component {
   }
 
   onKeyPressAction(e, key){
+    //console.log(e.keyCode);
     const { original, value } = this.state.missingWords[key]
     const { points, completeKeys } = this.state;
+    const { keypressAction } = this.props;
     const originalChars = chars(original);
     const valueChars = chars(value);
     const currentIdx = (valueChars.length === 0) ? 0 : valueChars.length;
@@ -85,6 +87,7 @@ class ReactFill extends React.Component {
         this.completeWord(points + 1, key);
       }
     }
+    keypressAction(e)
   }
 
   render(){
