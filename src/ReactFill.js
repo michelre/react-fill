@@ -2,7 +2,8 @@ import React from 'react';
 import R from 'ramda';
 import chars from 'voca/chars';
 import words from 'voca/words';
-
+import keycode from 'keycode';
+import keycodes from 'keycodes';
 import { getRandoms, findNextKey } from './utils';
 import '../scss/style.scss';
 
@@ -69,7 +70,6 @@ class ReactFill extends React.Component {
   }
 
   onKeyPressAction(e, key){
-    //console.log(e.keyCode);
     const { original, value } = this.state.missingWords[key]
     const { points, completeKeys } = this.state;
     const { keypressAction } = this.props;
@@ -77,15 +77,23 @@ class ReactFill extends React.Component {
     const valueChars = chars(value);
     const currentIdx = (valueChars.length === 0) ? 0 : valueChars.length;
     const lensState = R.lensPath(['missingWords', key, 'value']);
-    if(e.keyCode === 9) {
-      this.handleTab(lensState, original, key)
-      e.preventDefault();
-    }
-    if (e.key === originalChars[currentIdx]) {
-      this.setState(R.set(lensState, `${value}${e.key}`, this.state));
+
+    if (String.fromCharCode(e.which).toLowerCase() === originalChars[currentIdx].toLowerCase()) {
+      this.setState(R.set(lensState, `${value}${originalChars[currentIdx]}`, this.state));
       if(currentIdx === originalChars.length - 1) {
         this.completeWord(points + 1, key);
       }
+    }
+    keypressAction(e)
+  }
+
+  onKeyDownAction(e, key){
+    const { keypressAction } = this.props;
+    const { original, value } = this.state.missingWords[key]
+    const lensState = R.lensPath(['missingWords', key, 'value']);
+    if(e.keyCode === 9) {
+      this.handleTab(lensState, original, key)
+      e.preventDefault();
     }
     keypressAction(e)
   }
@@ -103,7 +111,8 @@ class ReactFill extends React.Component {
               ref={(input) => this.refs = R.merge(this.refs, { [k]: input })}
               id={k}
               value={missingWords[k].value}
-              onKeyDown={(e) => this.onKeyPressAction(e, k)}
+              onKeyPress={(e) => this.onKeyPressAction(e, k)}
+              onKeyDown={(e) => this.onKeyDownAction(e, k)}
             />
             <label htmlFor={k}>
               {mapIndex((char, idx) => {
