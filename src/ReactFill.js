@@ -2,8 +2,6 @@ import React from 'react';
 import R from 'ramda';
 import chars from 'voca/chars';
 import words from 'voca/words';
-import keycode from 'keycode';
-import keycodes from 'keycodes';
 import { getRandoms, findNextKey } from './utils';
 import '../scss/style.scss';
 
@@ -21,7 +19,7 @@ class ReactFill extends React.Component {
       if(nextKey){
         this.refs[nextKey].focus();
       }
-    }, 200)
+    }, 100)
   }
 
   componentWillReceiveProps(nextProps){
@@ -69,29 +67,26 @@ class ReactFill extends React.Component {
     this.completeWord(points, key);
   }
 
-  onKeyPressAction(e, key){
-    const { original, value } = this.state.missingWords[key]
-    const { points, completeKeys } = this.state;
-    const { keypressAction } = this.props;
-    const originalChars = chars(original);
-    const valueChars = chars(value);
-    const currentIdx = (valueChars.length === 0) ? 0 : valueChars.length;
+  onChangeAction(e, key){
+    const { points } = this.state;
+    const { original, value } = this.state.missingWords[key];
+    const { originalChars, valueChars } = { originalChars: chars(original), valueChars: chars(value) };
+    const nextWantedChar = originalChars[valueChars.length];
     const lensState = R.lensPath(['missingWords', key, 'value']);
-
-    if (String.fromCharCode(e.which).toLowerCase() === originalChars[currentIdx].toLowerCase()) {
-      this.setState(R.set(lensState, `${value}${originalChars[currentIdx]}`, this.state));
-      if(currentIdx === originalChars.length - 1) {
+    if(e.target.value.toLowerCase() === `${value}${nextWantedChar}`.toLowerCase()){
+      const nextValue = `${value}${originalChars[valueChars.length]}`
+      this.setState(R.set(lensState, nextValue, this.state));
+      if(nextValue === original){
         this.completeWord(points + 1, key);
       }
     }
-    keypressAction(e)
   }
 
-  onKeyDownAction(e, key){
+  onKeyUpAction(e, key){
     const { keypressAction } = this.props;
     const { original, value } = this.state.missingWords[key]
     const lensState = R.lensPath(['missingWords', key, 'value']);
-    if(e.keyCode === 9) {
+    if(e.keyCode === 9 || e.keyCode === 13) {
       this.handleTab(lensState, original, key)
       e.preventDefault();
     }
@@ -111,8 +106,9 @@ class ReactFill extends React.Component {
               ref={(input) => this.refs = R.merge(this.refs, { [k]: input })}
               id={k}
               value={missingWords[k].value}
-              onKeyPress={(e) => this.onKeyPressAction(e, k)}
-              onKeyDown={(e) => this.onKeyDownAction(e, k)}
+              onKeyUp={(e) => this.onKeyUpAction(e, k)}//this.onKeyPressAction(e, k)}
+              onKeyDown={(e) => {}}//this.onKeyDownAction(e, k)}
+              onChange={(e) => this.onChangeAction(e, k)}
             />
             <label htmlFor={k}>
               {mapIndex((char, idx) => {
