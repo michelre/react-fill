@@ -19,7 +19,7 @@ class ReactFill extends React.Component {
       if(nextKey){
         this.refs[nextKey].focus();
       }
-    }, 100)
+    }, 10)
   }
 
   componentWillReceiveProps(nextProps){
@@ -46,7 +46,7 @@ class ReactFill extends React.Component {
     this.startTime = new Date().getTime();
   }
 
-  completeWord(newPoints, key){
+  completeWord(newPoints, key, isAutocomplete = false){
     const { completeAction } = this.props;
     const { points, completeKeys } = this.state;
     const newCompleteKeys = R.union(completeKeys, [key]);
@@ -56,7 +56,7 @@ class ReactFill extends React.Component {
       this.setState({ points: newPoints });
     } else {
       this.endTime = new Date().getTime();
-      completeAction({ duration: this.endTime - this.startTime, points: newPoints })
+      completeAction({ duration: this.endTime - this.startTime, points: newPoints }, isAutocomplete)
     }
   }
 
@@ -64,7 +64,7 @@ class ReactFill extends React.Component {
     const { points } = this.state;
     let newState = R.set(lensState, originalValue, this.state);
     this.setState(newState)
-    this.completeWord(points, key);
+    this.completeWord(points, key, true);
   }
 
   onChangeAction(e, key){
@@ -77,7 +77,7 @@ class ReactFill extends React.Component {
       const nextValue = `${value}${originalChars[valueChars.length]}`
       this.setState(R.set(lensState, nextValue, this.state));
       if(nextValue === original){
-        this.completeWord(points + 1, key);
+        this.completeWord(points + 1, key, false);
       }
     }
   }
