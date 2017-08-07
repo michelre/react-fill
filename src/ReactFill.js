@@ -42,21 +42,32 @@ class ReactFill extends React.Component {
       focusKey: R.head(this.keys),
       completeKeys: [],
       points: 0,
+      completedWords: [],
+      unCompletedWords: [],
     };
     this.startTime = new Date().getTime();
   }
 
   completeWord(newPoints, key, isAutocomplete = false){
     const { completeAction } = this.props;
-    const { points, completeKeys } = this.state;
+    const { points, completeKeys, missingWords } = this.state;
+    let { completedWords, unCompletedWords } = this.state;
     const newCompleteKeys = R.union(completeKeys, [key]);
+    const word = missingWords[key].original
     const done = !findNextKey(this.keys, newCompleteKeys)
     this.setState({ completeKeys: newCompleteKeys });
+    if(isAutocomplete){
+      unCompletedWords = unCompletedWords.concat([word]);
+    } else {
+      completedWords = completedWords.concat([word]);
+    }
+    this.setState({ unCompletedWords, completedWords });
     if(!done) {
       this.setState({ points: newPoints });
     } else {
       this.endTime = new Date().getTime();
-      completeAction({ duration: this.endTime - this.startTime, points: newPoints }, isAutocomplete)
+      completeAction({ duration: this.endTime - this.startTime, points: newPoints },
+        isAutocomplete, { completedWords, unCompletedWords });
     }
   }
 
@@ -106,8 +117,7 @@ class ReactFill extends React.Component {
               ref={(input) => this.refs = R.merge(this.refs, { [k]: input })}
               id={k}
               value={missingWords[k].value}
-              onKeyUp={(e) => this.onKeyUpAction(e, k)}//this.onKeyPressAction(e, k)}
-              onKeyDown={(e) => {}}//this.onKeyDownAction(e, k)}
+              onKeyUp={(e) => this.onKeyUpAction(e, k)}
               onChange={(e) => this.onChangeAction(e, k)}
             />
             <label htmlFor={k}>
