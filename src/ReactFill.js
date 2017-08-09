@@ -15,10 +15,15 @@ class ReactFill extends React.Component {
   componentDidMount(){
     this.refs[this.state.focusKey].focus()
     this.intervalID = setInterval(() => {
-      const nextKey = findNextKey(this.keys, this.state.completeKeys);
-      if(nextKey){
-        this.refs[nextKey].focus();
+      try {
+        const nextKey = findNextKey(this.keys, this.state.completeKeys);
+        if(nextKey){
+          this.refs[nextKey].focus();
+        }
+      }catch (e){
+         clearInterval(this.intervalID)
       }
+
     }, 10)
   }
 
@@ -50,16 +55,16 @@ class ReactFill extends React.Component {
 
   completeWord(newPoints, key, isAutocomplete = false){
     const { completeAction } = this.props;
-    const { points, completeKeys, missingWords } = this.state;
+    const { points, completeKeys, missingWords, tokens } = this.state;
     let { completedWords, unCompletedWords } = this.state;
     const newCompleteKeys = R.union(completeKeys, [key]);
-    const word = missingWords[key].original
     const done = !findNextKey(this.keys, newCompleteKeys)
     this.setState({ completeKeys: newCompleteKeys });
+    const [idx, word] = key.split('-');
     if(isAutocomplete){
-      unCompletedWords = unCompletedWords.concat([word]);
+      unCompletedWords = unCompletedWords.concat([{ idx: parseInt(idx, 10), word }]);
     } else {
-      completedWords = completedWords.concat([word]);
+      completedWords = completedWords.concat([{ idx: parseInt(idx, 10), word }]);
     }
     this.setState({ unCompletedWords, completedWords });
     if(!done) {
@@ -67,7 +72,7 @@ class ReactFill extends React.Component {
     } else {
       this.endTime = new Date().getTime();
       completeAction({ duration: this.endTime - this.startTime, points: newPoints },
-        isAutocomplete, { completedWords, unCompletedWords });
+        isAutocomplete, { completedWords, unCompletedWords, tokens });
     }
   }
 
