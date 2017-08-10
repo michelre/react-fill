@@ -18,3 +18,14 @@ export const findNextKey = (allKeys, completeKeys) => {
   }
   return nextKey
 }
+
+export const isPunctuationChar = (char) => {
+  const reg = /,|\.|!|\?|\"/;
+  return reg.test(char);
+}
+
+export const completeWhilePunctuation = (nextTokens, str = '') => {
+  const nextToken = nextTokens[0];
+  if(!isPunctuationChar(nextToken)) return str;
+  return completeWhilePunctuation(R.takeLast(nextTokens.length - 1, nextTokens), `${str}${nextToken}`)
+}

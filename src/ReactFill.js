@@ -2,7 +2,7 @@ import React from 'react';
 import R from 'ramda';
 import chars from 'voca/chars';
 import words from 'voca/words';
-import { getRandoms, findNextKey } from './utils';
+import { getRandoms, findNextKey, isPunctuationChar, completeWhilePunctuation } from './utils';
 import '../scss/style.scss';
 
 class ReactFill extends React.Component {
@@ -79,7 +79,7 @@ class ReactFill extends React.Component {
   handleTab(lensState, originalValue, key){
     const { points } = this.state;
     let newState = R.set(lensState, originalValue, this.state);
-    this.setState(newState)
+    this.setState(newState);
     this.completeWord(points, key, true);
   }
 
@@ -87,10 +87,12 @@ class ReactFill extends React.Component {
     const { points } = this.state;
     const { original, value } = this.state.missingWords[key];
     const { originalChars, valueChars } = { originalChars: chars(original), valueChars: chars(value) };
-    const nextWantedChar = originalChars[valueChars.length];
+    let nextWantedChar = originalChars[valueChars.length];
     const lensState = R.lensPath(['missingWords', key, 'value']);
     if(e.target.value.toLowerCase() === `${value}${nextWantedChar}`.toLowerCase()){
-      const nextValue = `${value}${originalChars[valueChars.length]}`
+      nextWantedChar = completeWhilePunctuation(R.takeLast(originalChars.length - (valueChars.length + 1), originalChars));
+      //const nextValue = `${value}${originalChars[valueChars.length]}`
+      const nextValue = `${value}${originalChars[valueChars.length]}${nextWantedChar}`;
       this.setState(R.set(lensState, nextValue, this.state));
       if(nextValue === original){
         this.completeWord(points + 1, key, false);
